@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>عالم القصص والروايات</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101522;color:#fff;font-family:Tahoma,Arial}
+header{text-align:center;padding:25px;background:#202b43;border-bottom:2px solid #d6ad54}
+h1,h2,h3{color:#edc76b}
+nav{text-align:center;padding:15px}
+button{background:#d6ad54;color:#171717;border:0;padding:11px;border-radius:8px;margin:4px;font-weight:bold;cursor:pointer}
+button:hover{background:#f2d68e}
+main{max-width:900px;margin:auto;padding:14px}
+input{width:100%;padding:13px;background:#202b43;color:white;border:1px solid #555;border-radius:8px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card{background:#202b43;border-radius:12px;overflow:hidden;padding-bottom:12px}
+.card img{width:100%;height:145px;object-fit:cover}
+.card h3,.card p{padding:0 12px}
+#reader{display:none;background:#202b43;padding:17px;border-radius:12px;line-height:2}
+#picture{width:100%;max-height:280px;object-fit:cover;border-radius:10px}
+#storyText{white-space:pre-line;font-size:17px;line-height:2.1}
+#ending{display:none;background:#344331;padding:14px;border-radius:10px;margin-top:20px}
+footer{text-align:center;color:#aaa;padding:25px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>📚 عالم القصص والروايات</h1>
+<p>عش المغامرة... واكتشف عوالم الخيال</p>
+</header>
+
+<nav>
+<button onclick="home()">🏠 المكتبة</button>
+<button onclick="favoritesPage()">⭐ المفضلة</button>
+</nav>
+
+<main>
+<section id="library">
+<input id="search" placeholder="ابحث عن قصة..." oninput="render()">
+<div class="grid" id="stories"></div>
+</section>
+
+<section id="reader">
+<button onclick="home()">⬅ المكتبة</button>
+<h2 id="title"></h2>
+<img id="picture" alt="صورة القصة">
+<h3 id="chapter"></h3>
+<p id="storyText"></p>
+<div id="ending"><h3>🌟 الحكمة المستفادة</h3><p id="wisdom"></p></div>
+<div>
+<button onclick="speak()">🔊 استمع</button>
+<button onclick="pauseSpeech()">⏸ إيقاف مؤقت</button>
+<button onclick="resumeSpeech()">▶ متابعة</button>
+<button onclick="stopSpeech()">⏹ إيقاف الصوت</button>
+</div>
+<div>
+<button onclick="previous()">الفصل السابق</button>
+<button onclick="next()">الفصل التالي</button>
+<button id="fav" onclick="toggleFav()">⭐ المفضلة</button>
+</div>
+<p id="counter"></p>
+</section>
+</main>
+
+<footer>© عالم القصص والروايات</footer>
+
+<script>
+const stories=[
+{id:1,title:"مملكة الظلال",desc:"سر مملكة اختفت منذ آلاف السنين",img:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",wisdom:"الشجاعة ليست غياب الخوف، بل مواجهة الصعاب.",chapters:[
+["الباب المنسي","في أقصى الشمال قامت مملكة قديمة اسمها إيرادور. كانت أبراجها تلمع تحت ضوء القمر، وتحرسها جبال لا يصل إليها أحد. عاش هناك شاب اسمه آدم، كان يحلم باكتشاف الأسرار القديمة. في يوم وجد مفتاحًا أسود داخل مكتبة مهجورة، وعلى المفتاح نقش يقول: عندما يعود الظل، افتح الباب المنسي.","https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800"],
+["نداء الغابة","حمل آدم المفتاح وسافر إلى غابة الأشجار العملاقة. سمع أصواتًا غريبة بين الأغصان، ثم ظهر طائر ذهبي تحدث بلغة البشر. أخبره أن المملكة تخفي سرًا وأن المفتاح هو آخر أمل لإنقاذها. تابع آدم طريقه حتى وصل إلى بوابة حجرية.","https://images.unsplash.com/photo-1448375240586-882707db888b?w=800"],
+["حارس البوابة","كان أمام البوابة تمثال لمحارب يحمل سيفًا فضيًا. عندما اقترب آدم تحرك التمثال وقال: لا يدخل هنا إلا من يعرف لماذا يقاتل. أجاب آدم بأنه يريد حماية الناس وكشف الحقيقة. أضاء المفتاح وانفتحت البوابة.","https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800"]
+]},
+{id:2,title:"القصر الذي لا ينام",desc:"قصر سحري يخفي سرًا عظيمًا",img:"https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800",wisdom:"المعرفة كنز لا يقل قيمة عن الذهب.",chapters:[
+["المدينة الغريبة","في مدينة أوريانا كان هناك قصر ضخم لا تنطفئ أنواره أبدًا. سمع الشاب سامر حكايات كثيرة عنه، فقرر اكتشاف الحقيقة. عندما وصل وجد الباب مفتوحًا وكأن القصر كان ينتظره.","https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800"],
+["المكتبة السحرية","دخل سامر غرفة مليئة بكتب تطير في الهواء. ظهر كتاب ذهبي وفتح صفحاته بنفسه. وجد سامر داخله خريطة لمدينة مخفية تحت القصر، فقرر البحث عنها.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"],
+["سر الملك","في أعماق القصر وجد غرفة فيها صورة ملك قديم. اكتشف أن الملك صنع مكتبة تحفظ ذكريات العالم، وأن الأنوار مصدرها حجر سحري يحمي المعرفة من النسيان.","https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800"]
+]},
+{id:3,title:"مدينة الرمال المفقودة",desc:"حضارة أسطورية مدفونة في الصحراء",img:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800",wisdom:"الإصرار يفتح أبوابًا تبدو مستحيلة.",chapters:[
+["الخريطة الذهبية","عثر المستكشف ناصر على خريطة قديمة تشير إلى مدينة اسمها زارون. قيل إن المدينة اختفت تحت الرمال، وإن أبوابها لا تظهر إلا عند اكتمال القمر.","https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800"],
+["واحة الأسرار","سافر ناصر مع فريقه عبر الصحراء حتى وصل إلى واحة غريبة. وجدوا أعمدة حجرية تحمل رموزًا لم يعرفها أحد. لاحظ ناصر أن الرموز تشبه تلك الموجودة على الخريطة.","https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=800"],
+["المدينة المدفونة","عند اكتمال القمر اهتزت الرمال وظهرت بوابة ضخمة. دخل الفريق فوجد مدينة واسعة ذات قصور ذهبية وقنوات ماء مضيئة. لقد عادت زارون إلى العالم.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"]
+]},
+{id:4,title:"المحقق والرسالة المجهولة",desc:"لغز سحري في مدينة قديمة",img:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800",wisdom:"العقل الهادئ يرى ما لا يراه التسرع.",chapters:[
+["الرسالة","وصلت إلى المحقق ياسر رسالة عليها ختم أزرق. كتب فيها: اختفت البلورة من برج الزمن، ولا يستطيع العثور عليها إلا من يفهم الساعة.","https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800"],
+["برج الزمن","دخل ياسر برجًا قديمًا مليئًا بالساعات. لاحظ أن كل ساعة تشير إلى وقت مختلف، وأن واحدة منها تتحرك عكس الجميع. اكتشف بابًا سريًا خلفها.","https://images.unsplash.com/photo-1495366811353-888de485469a?w=800"],
+["الحقيقة","وجد البلورة داخل غرفة مخفية، واكتشف أن حارس البرج أخفاها لحمايتها من ساحر يريد السيطرة على الزمن. أعادها ياسر إلى مكانها وحفظ سر البرج.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"]
+]},
+{id:5,title:"حارس المملكة الأخير",desc:"فارس يحمل أمل مملكة كاملة",img:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800",wisdom:"القوة الحقيقية هي حماية الآخرين.",chapters:[
+["المملكة المهددة","في قارة أستيريا قامت سبع ممالك عظيمة. كان ريان آخر حراس مملكة النور، ويحمل سيفًا ورثه عن أبيه. وصلت أخبار عن عودة ملك الظلام بعد غياب مئات السنين. اجتمع الملك بقادة المملكة، لكن أحدًا لم يعرف كيف يوقف الخطر.","https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800"],
+["السيف القديم","ذهب ريان إلى معبد الحراس، وهناك وجد نقشًا يقول إن السيف لا يستجيب إلا لقلب شجاع. وضع يده عليه، فظهرت كتابة مضيئة تخبره عن ثلاثة أحجار سحرية موزعة في العالم.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"],
+["غابة العمالقة","دخل ريان غابة تسكنها مخلوقات ضخمة. قابل حارسًا حجريًا طلب منه حل لغز قديم. بعد تفكير طويل اكتشف ريان الإجابة، فحصل على الحجر الأول.","https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800"],
+["مدينة النجوم","وصل إلى مدينة معلقة بين الجبال، حيث يعيش السحرة. ساعد فتاة صغيرة في استعادة كتاب عائلتها، فكافأه كبير السحرة بالحجر الثاني وأخبره أن الثالث في قلعة الظلال.","https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800"],
+["الحارس الأخير","وصل ريان إلى القلعة وجمع الأحجار الثلاثة. أضاء السيف بقوة هائلة، فعاد النور إلى المملكة. لم ينتصر ريان وحده، بل بفضل مساعدة أصدقائه وشعبه.","https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800"]
+]},
+{id:6,title:"أسطورة البحار السبعة",desc:"رحلة إلى جزر لا تظهر في الخرائط",img:"https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800",wisdom:"الصداقة والتعاون يصنعان أعظم الرحلات.",chapters:[
+["خريطة البحار","في عالم ماريسيا عاش البحار مالك، الذي ورث خريطة من جده. كانت الخريطة تشير إلى سبعة بحار، وفي وسطها علامة على جزيرة تسمى قلب المحيط.","https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800"],
+["السفينة الأسطورية","جمع مالك أصدقاءه وأصلحوا سفينة قديمة أطلقوا عليها اسم النجمة. انطلقوا نحو البحر الأول، حيث شاهدوا حيتانًا مضيئة تسبح تحت الماء.","https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800"],
+["جزيرة العمالقة","وصلوا إلى جزيرة يسكنها عمالقة طيبون. أخبرهم زعيم الجزيرة أن الطريق إلى البحر الثاني يمر عبر كهف المرجان، لكنه يحتاج إلى شجاعة وتعاون.","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"],
+["حارس المحيط","في أعماق الكهف ظهر مخلوق بحري عظيم. لم يهاجمهم، بل سألهم عن هدف رحلتهم. عندما أخبروه أنهم يبحثون عن المعرفة، سمح لهم بالعبور.","https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800"],
+["قلب المحيط","وصل الفريق إلى جزيرة مضيئة وسط البحار السبعة. وجدوا حجرًا قديمًا يحفظ تاريخ البحارة والرحلات. عادوا حاملين معرفة لم يعرفها العالم من قبل.","https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800"]
+]},
+{id:7,title:"فارس التنين الأزرق",desc:"صداقة بين فارس وتنين أسطوري",img:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",wisdom:"لا تحكم على الآخرين قبل أن تعرف حقيقتهم.",chapters:[
+["صوت الجبل","في قارة دراكونيا عاش فارس شاب اسمه سامي. كانت الأساطير تقول إن تنينًا أزرق يحرس قمة الجبل. قرر سامي الصعود ليعرف الحقيقة.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"],
+["الكهف الأزرق","وجد سامي كهفًا يضيء بلون أزرق. في داخله تنين ضخم له عينان لامعتان. لم يهاجمه التنين، بل طلب مساعدته في العثور على بيضة مفقودة.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"],
+["البيضة المفقودة","سافر سامي عبر الوادي حتى وجد البيضة قرب نهر سحري. أعادها إلى التنين، الذي أخبره أن سلالة التنانين القديمة مهددة بالاختفاء.","https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800"],
+["عهد الصداقة","أصبح سامي صديق التنين، وتعلم منه أسرار الجبال والسماء. واكتشف أن التنين يستطيع فهم لغات المخلوقات السحرية.","https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800"],
+["حامي السماء","عادت التنانين إلى واديها القديم، وأصبح سامي حامي الجبل. وانتشرت قصته بين الممالك بوصفه الفارس الذي أعاد الأمل للتنانين.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"]
+]},
+{id:8,title:"أسرار الجزيرة المهجورة",desc:"حضارة مخفية خلف غابة مسحورة",img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",wisdom:"التعاون يكشف أسرارًا لا يستطيع الفرد اكتشافها وحده.",chapters:[
+["الوصول إلى الجزيرة","وصل ثلاثة مستكشفين إلى جزيرة لا تظهر على الخرائط. كانت الغابة كثيفة، والطيور تصدر أصواتًا لم يسمعوها من قبل.","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"],
+["المدينة الخضراء","اكتشفوا مدينة قديمة تغطيها النباتات. كانت جدرانها تحمل رسومات لملوك ومخلوقات أسطورية. وجدوا بابًا حجريًا يؤدي إلى أسفل المدينة.","https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800"],
+["كتاب الأسرار","في غرفة تحت الأرض وجدوا كتابًا يتحدث عن حضارة اسمها إيلورا. كان سكانها يمتلكون معرفة بالسحر والطبيعة، ثم اختفوا فجأة.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"],
+["حارس الجزيرة","ظهر مخلوق مصنوع من جذوع الأشجار، وأخبرهم أن الجزيرة تخفي قلبًا سحريًا. لم يسمح لهم بالاقتراب إلا بعد أن أثبتوا احترامهم للطبيعة.","https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800"],
+["الحقيقة","اكتشف المستكشفون أن سكان إيلورا غادروا الجزيرة لحماية القلب السحري من الطامعين. قرروا حفظ السر وعدم السماح لأحد بإيذاء الجزيرة.","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"]
+]},
+{id:9,title:"مملكة النار والجليد",desc:"صراع بين قوتين ونبوءة قديمة",img:"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800",wisdom:"الاتحاد أقوى من الخلاف.",chapters:[
+["المملكتان","في قارة إيراثيا قامت مملكة النار في الجنوب ومملكة الجليد في الشمال. عاشتا في خلاف طويل بسبب حجر سحري قديم.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"],
+["النبوءة","عثرت الأميرة ليان على نبوءة تقول إن النار والجليد إذا اتحدا أنقذا العالم من ظلام قادم. قررت البحث عن الأمير فارس.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"],
+["اللقاء","التقى فارس وليان عند حدود المملكتين. كان كل منهما يحمل شكوكًا عن الآخر، لكنهما قررا التعاون بعد ظهور علامات خطر في السماء.","https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800"],
+["قلب العاصفة","ذهبا إلى جبل العاصفة، حيث وجدوا حجرًا يجمع طاقة النار والجليد. احتاجا إلى العمل معًا حتى يستعيدا توازنه.","https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800"],
+["العهد الجديد","عادت الطاقة إلى الجبل، وانتهى الخطر. وقّعت المملكتان عهدًا جديدًا للتعاون، وأصبح فارس وليان رمزًا للوحدة.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"]
+]},
+{id:10,title:"الرحلة إلى المجهول",desc:"استكشاف عالم مليء بالعجائب",img:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",wisdom:"كل اكتشاف عظيم يبدأ بسؤال وشغف بالمعرفة.",chapters:[
+["البداية","في قارة أوريانا عاش مستكشف اسمه عادل. كان يحلم برؤية الأراضي التي لم يصل إليها أحد. عثر على بوصلة قديمة تشير دائمًا إلى الشمال المجهول.","https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"],
+["الغابة الطائرة","قادته البوصلة إلى غابة تطفو أشجارها فوق الأرض. شاهد أنهارًا من الضوء ومخلوقات صغيرة تطير بين الأغصان.","https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800"],
+["مدينة السحاب","وصل عادل إلى مدينة فوق الغيوم، يسكنها علماء يدرسون النجوم. أعطوه خريطة جديدة تقوده إلى وادي الأحجار السبعة.","https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800"],
+["الوادي السحري","وجد سبعة أحجار مختلفة، لكل حجر قوة مرتبطة بعنصر من عناصر الطبيعة. أدرك أن البوصلة كانت تقوده إلى أماكن تحفظ أسرار العالم.","https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800"],
+["بداية مغامرة أخرى","عاد عادل إلى مدينته وكتب ما اكتشفه في كتاب كبير. لكنه لاحظ أن البوصلة بدأت تشير إلى مكان جديد، فعرف أن رحلته لم تنته بعد.","https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800"]
+]}
+];
+
+let current=null,chapterIndex=0,filter="all";
+let favorites=JSON.parse(localStorage.getItem("favStories")||"[]");
+
+function render(){
+let list=stories.filter(s=>
+(filter==="fav"?favorites.includes(s.id):true)&&
+s.title.includes(document.getElementById("search").value)
+);
+document.getElementById("stories").innerHTML=list.map(s=>`
+<div class="card">
+<img src="${s.img}" alt="${s.title}">
+<h3>${s.title}</h3><p>${s.desc}</p>
+<button onclick="openStory(${s.id})">📖 اقرأ</button>
+</div>`).join("")||"<p>لا توجد قصص هنا.</p>";
+}
+function openStory(id){
+current=stories.find(s=>s.id===id);chapterIndex=0;
+document.getElementById("library").style.display="none";
+document.getElementById("reader").style.display="block";
+showChapter();window.scrollTo(0,0);
+}
+function showChapter(){
+let c=current.chapters[chapterIndex];
+document.getElementById("title").textContent=current.title;
+document.getElementById("chapter").textContent=c[0];
+document.getElementById("storyText").textContent=c[1];
+document.getElementById("picture").src=c[2];
+document.getElementById("ending").style.display=chapterIndex===current.chapters.length-1?"block":"none";
+document.getElementById("wisdom").textContent=current.wisdom;
+document.getElementById("counter").textContent="الفصل "+(chapterIndex+1)+" من "+current.chapters.length;
+document.getElementById("fav").textContent=favorites.includes(current.id)?"⭐ إزالة من المفضلة":"⭐ أضف للمفضلة";
+}
+function next(){
+if(chapterIndex<current.chapters.length-1){chapterIndex++;stopSpeech();showChapter();window.scrollTo(0,0);}
+else document.getElementById("counter").textContent="🎉 انتهت القصة!";
+}
+function previous(){
+if(chapterIndex>0){chapterIndex--;stopSpeech();showChapter();}
+}
+function speak(){
+stopSpeech();
+let text=current.chapters[chapterIndex][1];
+let msg=new SpeechSynthesisUtterance(text);
+msg.lang="ar-SA";msg.rate=0.9;
+speechSynthesis.speak(msg);
+}
+function pauseSpeech(){if(speechSynthesis.speaking)speechSynthesis.pause();}
+function resumeSpeech(){if(speechSynthesis.paused)speechSynthesis.resume();}
+function stopSpeech(){speechSynthesis.cancel();}
+function toggleFav(){
+if(favorites.includes(current.id))favorites=favorites.filter(x=>x!==current.id);
+else favorites.push(current.id);
+localStorage.setItem("favStories",JSON.stringify(favorites));
+showChapter();
+}
+function home(){
+stopSpeech();
+document.getElementById("reader").style.display="none";
+document.getElementById("library").style.display="block";
+filter="all";document.getElementById("search").value="";render();
+}
+function favoritesPage(){
+stopSpeech();filter="fav";
+document.getElementById("reader").style.display="none";
+document.getElementById("library").style.display="block";
+document.getElementById("search").value="";render();
+}
+render();
+</script>
+</body>
+</html>
