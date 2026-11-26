@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17251f">
+<title>عالم القصص والروايات</title>
+<style>
+:root {
+  --bg:#101a16;
+  --panel:#1b2922;
+  --gold:#e5bd72;
+  --text:#f6f0e5;
+  --muted:#b8c0b8;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Tahoma,Arial,sans-serif;
+}
+header {
+  padding:24px 18px;
+  background:linear-gradient(135deg,#243d30,#111c17);
+  border-bottom:1px solid #435344;
+}
+.logo {font-size:27px;font-weight:bold;color:var(--gold)}
+header p {color:var(--muted);margin-bottom:0}
+main {max-width:850px;margin:auto;padding:18px}
+h2 {color:var(--gold);font-size:21px}
+.search {
+  width:100%;padding:14px;border-radius:12px;
+  border:1px solid #465448;background:var(--panel);
+  color:white;font-size:16px;margin:15px 0;
+}
+.categories {display:flex;gap:8px;flex-wrap:wrap}
+button {
+  cursor:pointer;font-family:inherit;
+}
+.category,.action {
+  border:1px solid #566554;background:var(--panel);
+  color:var(--text);padding:10px 15px;border-radius:20px;
+}
+.category.active {background:var(--gold);color:#17251f}
+.grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;margin-top:18px;
+}
+.book {
+  background:var(--panel);border:1px solid #34453a;
+  border-radius:15px;padding:17px;
+}
+.book-cover {
+  height:105px;border-radius:10px;
+  background:linear-gradient(140deg,#536d50,#192e23);
+  display:grid;place-items:center;font-size:43px;
+}
+.book h3 {margin-bottom:7px}
+.muted {color:var(--muted);font-size:13px}
+.read {
+  width:100%;margin-top:12px;padding:12px;
+  background:var(--gold);color:#17251f;
+  border:0;border-radius:9px;font-weight:bold;
+}
+#reader {
+  display:none;background:var(--panel);
+  border-radius:15px;padding:20px;margin-top:20px;
+}
+#storyText {
+  white-space:pre-line;line-height:2.1;
+  font-size:18px;
+}
+.wisdom {
+  margin-top:25px;padding:17px;
+  background:#344331;border-right:4px solid var(--gold);
+  border-radius:10px;line-height:1.9;
+}
+.actions {display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}
+footer {
+  text-align:center;padding:25px;color:var(--muted);
+  font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📚 عالم القصص والروايات</div>
+  <p>اقرأ واستمتع، واخرج من كل حكاية بحكمة.</p>
+</header>
+
+<main>
+  <section id="home">
+    <h2>مرحباً بك في عالم الحكايات</h2>
+    <input class="search" id="search" placeholder="ابحث عن قصة أو رواية..." aria-label="البحث">
+
+    <div class="categories" id="categories">
+      <button class="category active" data-cat="الكل">الكل</button>
+      <button class="category" data-cat="مغامرات">مغامرات</button>
+      <button class="category" data-cat="غموض">غموض</button>
+      <button class="category" data-cat="تاريخية">تاريخية</button>
+      <button class="category" data-cat="خيال">خيال</button>
+      <button class="category" data-cat="واقعية">واقعية</button>
+    </div>
+
+    <div class="actions">
+      <button class="action" id="allBtn">📖 جميع القصص</button>
+      <button class="action" id="favBtn">⭐ المفضلة</button>
+    </div>
+
+    <h2 id="sectionTitle">اكتشف القصص والروايات</h2>
+    <div class="grid" id="books"></div>
+  </section>
+
+  <section id="reader">
+    <button class="action" onclick="closeReader()">← العودة للمكتبة</button>
+    <div id="readerContent"></div>
+  </section>
+</main>
+
+<footer>
+  عالم القصص والروايات © 2026
+  <br>كل قصة تحمل حكاية، وكل حكاية تحمل درساً.
+</footer>
+
+<script>
+const stories = [
+ {
+  id:1,title:"الصديق الوفي",cat:"واقعية",type:"قصة قصيرة",
+  desc:"حكاية عن الصداقة والوفاء وقت الشدائد.",
+  chapters:[
+   {title:"البداية",text:"في قرية صغيرة عاش صديقان اسمهما سامر ويوسف. كانا يقضيان أوقاتهما معاً، ويتعاونان في كل أمر.\n\nوفي يوم من الأيام قرر سامر السفر بحثاً عن عمل جديد، ووعد صديقه بأنه لن ينساه مهما ابتعدت المسافات."},
+   {title:"الاختبار",text:"بعد سنوات عاد سامر إلى قريته، ووجد أن يوسف يمر بظروف صعبة. لم يتردد سامر في الوقوف بجانبه ومساعدته.\n\nقال له يوسف: ظننت أن السنوات ستغير صداقتنا.\nأجابه سامر: الصداقة الحقيقية لا تقاس بالسنوات، بل بالمواقف."}
+  ],
+  wisdom:"الصديق الحقيقي يظهر وقت الشدائد، وليس وقت المصالح."
+ },
+ {
+  id:2,title:"القلعة الغامضة",cat:"غموض",type:"قصة قصيرة",
+  desc:"سر قلعة قديمة أخفت حكاية لسنوات طويلة.",
+  chapters:[
+   {title:"الرسالة",text:"عثر فتى اسمه آدم على رسالة قديمة في مكتبة جده. كانت الرسالة تشير إلى قلعة مهجورة عند أطراف القرية.\n\nقرر آدم أن يبحث عن حقيقة الرسالة، فاستعان بصديقته ليان."},
+   {title:"الحقيقة",text:"بعد بحث طويل اكتشف الاثنان أن القلعة كانت مكتبة قديمة، وأن صاحبها أخفى فيها كتباً نادرة لحمايتها من الضياع.\n\nلم يكن السر كنزاً من الذهب، بل كنزاً من المعرفة."}
+  ],
+  wisdom:"المعرفة كنز لا تقل قيمته عن أي ثروة."
+ },
+ {
+  id:3,title:"رحلة إلى المجهول",cat:"مغامرات",type:"رواية قصيرة",
+  desc:"رحلة ثلاثة أصدقاء لاكتشاف جزيرة مجهولة.",
+  chapters:[
+   {title:"الفصل الأول: الانطلاق",text:"اجتمع ثلاثة أصدقاء في الميناء بعد أن وجدوا خريطة قديمة. كانت تشير إلى جزيرة لم تظهر على الخرائط الحديثة.\n\nقال القائد مازن: لن تكون الرحلة سهلة، لكننا سنواجه الصعوبات معاً."},
+   {title:"الفصل الثاني: العاصفة",text:"واجه الأصدقاء عاصفة قوية، واضطروا إلى تغيير مسار سفينتهم. اختلفوا في البداية حول الطريق، لكنهم قرروا الاستماع إلى بعضهم.\n\nوبعد ساعات وصلوا إلى شاطئ الجزيرة."},
+   {title:"الفصل الثالث: الاكتشاف",text:"وجد الأصدقاء آثار مدينة قديمة، وعلى جدرانها نقوش تحكي تاريخ سكانها.\n\nأدركوا أن أعظم ما وجدوه لم يكن شيئاً مادياً، بل قصة حضارة نسيتها الأجيال."}
+  ],
+  wisdom:"التعاون يجعل الصعوبات أسهل، والرحلة الناجحة تبدأ بالعمل الجماعي."
+ },
+ {
+  id:4,title:"حارس المملكة",cat:"خيال",type:"رواية",
+  desc:"حكاية خيالية عن الشجاعة والعدل وحماية الأبرياء.",
+  chapters:[
+   {title:"الفصل الأول: الوعد",text:"في مملكة بعيدة عاش شاب اسمه ريان. كان يحلم بأن يصبح حارساً للمملكة، لا من أجل الشهرة، بل من أجل حماية أهلها.\n\nكان والده يقول له: القوة الحقيقية مسؤولية."},
+   {title:"الفصل الثاني: القرار",text:"عندما واجهت المملكة أزمة، قرر ريان مساعدة القرى البعيدة رغم صعوبة الطريق.\n\nلم ينتظر شكراً من أحد، فقد كان يؤمن أن مساعدة الناس واجب نبيل."},
+   {title:"الفصل الثالث: الحارس",text:"عاد ريان إلى المملكة بعد أن ساعد القرى على تجاوز أزمتها. أدرك الجميع أن الحارس الحقيقي ليس من يخشاه الناس، بل من يشعرون بالأمان بوجوده."}
+  ],
+  wisdom:"القوة الحقيقية ليست في السيطرة على الآخرين، بل في حماية الضعفاء والعدل معهم."
+ },
+ {
+  id:5,title:"حكمة الملك",cat:"تاريخية",type:"قصة تاريخية خيالية",
+  desc:"ملك يتعلم أن العدل أساس استقرار المملكة.",
+  chapters:[
+   {title:"المجلس",text:"كان ملك شاب يحكم مملكة واسعة، لكنه كان يسمع دائماً آراء مستشاريه دون أن يستمع إلى عامة الناس.\n\nوذات يوم قرر أن يزور الأسواق متنكراً ليتعرف على أحوال رعيته."},
+   {title:"الدرس",text:"استمع الملك إلى شكاوى الناس، وعرف أن بعض القرارات لم تكن عادلة.\n\nعاد إلى قصره، وقرر إصلاح ما استطاع، وجعل باب مجلسه مفتوحاً للجميع."}
+  ],
+  wisdom:"العدل أساس الحكم، والاستماع إلى الناس طريق لفهم احتياجاتهم."
+ }
+];
+
+let selectedCategory = "الكل";
+let favorites = JSON.parse(localStorage.getItem("storyFavorites") || "[]");
+let favoritesOnly = false;
+let currentStory = null;
+let chapterIndex = 0;
+
+function renderBooks(){
+ const query = document.getElementById("search").value.trim().toLowerCase();
+ const filtered = stories.filter(s =>
+  (selectedCategory==="الكل" || s.cat===selectedCategory) &&
+  (!favoritesOnly || favorites.includes(s.id)) &&
+  (s.title.toLowerCase().includes(query) || s.desc.toLowerCase().includes(query))
+ );
+ document.getElementById("sectionTitle").textContent =
+  favoritesOnly ? "قصصي المفضلة" : "اكتشف القصص والروايات";
+
+ document.getElementById("books").innerHTML = filtered.length
+ ? filtered.map(s => `
+  <article class="book">
+   <div class="book-cover">📖</div>
+   <h3>${s.title}</h3>
+   <div class="muted">${s.type} · ${s.cat} · ${s.chapters.length} فصول</div>
+   <p>${s.desc}</p>
+   <button class="read" onclick="openStory(${s.id})">ابدأ القراءة</button>
+   <button class="action" style="margin-top:9px;width:100%"
+    onclick="toggleFavorite(${s.id})">
+    ${favorites.includes(s.id)?"★ إزالة من المفضلة":"☆ أضف للمفضلة"}
+   </button>
+  </article>`).join("")
+ : "<p>لا توجد قصص مطابقة لبحثك.</p>";
+}
+
+function openStory(id){
+ currentStory = stories.find(s=>s.id===id);
+ chapterIndex = 0;
+ document.getElementById("home").style.display="none";
+ document.getElementById("reader").style.display="block";
+ renderChapter();
+ window.scrollTo(0,0);
+}
+
+function renderChapter(){
+ const s = currentStory;
+ const chapter = s.chapters[chapterIndex];
+ const isLast = chapterIndex === s.chapters.length-1;
+ document.getElementById("readerContent").innerHTML = `
+  <h2>${s.title}</h2>
+  <div class="muted">${s.type} · ${s.cat}</div>
+  <h3>${chapter.title}</h3>
+  <div id="storyText">${chapter.text}</div>
+  ${isLast ? `
+   <div class="wisdom">
+    <strong>💡 الحكمة المستفادة</strong>
+    <p>${s.wisdom}</p>
+   </div>` : ""}
+  <div class="actions">
+   ${chapterIndex>0?'<button class="action" onclick="previousChapter()">الفصل السابق</button>':""}
+   ${!isLast?'<button class="read" style="width:auto" onclick="nextChapter()">الفصل التالي ←</button>':""}
+  </div>
+  <p class="muted">الفصل ${chapterIndex+1} من ${s.chapters.length}</p>
+ `;
+}
+
+function nextChapter(){
+ if(chapterIndex<currentStory.chapters.length-1){
+  chapterIndex++;
+  renderChapter();
+  window.scrollTo(0,0);
+ }
+}
+function previousChapter(){
+ if(chapterIndex>0){
+  chapterIndex--;
+  renderChapter();
+ }
+}
+function closeReader(){
+ document.getElementById("reader").style.display="none";
+ document.getElementById("home").style.display="block";
+ currentStory=null;
+ renderBooks();
+ window.scrollTo(0,0);
+}
+function toggleFavorite(id){
+ favorites = favorites.includes(id)
+  ? favorites.filter(x=>x!==id)
+  : [...favorites,id];
+ localStorage.setItem("storyFavorites",JSON.stringify(favorites));
+ renderBooks();
+}
+document.getElementById("search").addEventListener("input",renderBooks);
+
+document.querySelectorAll(".category").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  document.querySelectorAll(".category").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  selectedCategory=btn.dataset.cat;
+  favoritesOnly=false;
+  renderBooks();
+ });
+});
+
+document.getElementById("favBtn").onclick=()=>{
+ favoritesOnly=true;
+ selectedCategory="الكل";
+ document.querySelectorAll(".category").forEach(b=>
+  b.classList.toggle("active",b.dataset.cat==="الكل"));
+ renderBooks();
+};
+document.getElementById("allBtn").onclick=()=>{
+ favoritesOnly=false;
+ selectedCategory="الكل";
+ document.querySelectorAll(".category").forEach(b=>
+  b.classList.toggle("active",b.dataset.cat==="الكل"));
+ renderBooks();
+};
+
+renderBooks();
+</script>
+</body>
+</html>
